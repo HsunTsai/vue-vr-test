@@ -9,6 +9,8 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import * as THREE from "three";
+import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
+import { useMove } from "./composable/useMove";
 
 const container = ref(null);
 
@@ -17,17 +19,18 @@ onMounted(() => {
     const scene = new THREE.Scene();
 
     // 建立攝影機
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(120, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 0, 0.1); // 初始位置略微前進避免視角錯誤
 
     // 建立渲染器
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio); // 設置更高的解析度
     container.value.appendChild(renderer.domElement);
 
     // 載入 360° 全景貼圖
     const textureLoader = new THREE.TextureLoader();
-    textureLoader.load("./photo.jpg", (texture) => {
+    textureLoader.load("./taipei_tech.jpg", (texture) => {
         const geometry = new THREE.SphereGeometry(500, 60, 40); // 建立球體
         geometry.scale(-1, 1, 1); // 反轉法線，讓內部可見
         const material = new THREE.MeshBasicMaterial({ map: texture });
@@ -35,59 +38,66 @@ onMounted(() => {
         scene.add(sphere);
     });
 
-    // 設定滑鼠控制變數
-    let isDragging = false;
-    let prevMouseX = 0;
-    let prevMouseY = 0;
-    let lon = 0, lat = 0;
 
-    // 監聽滑鼠事件
-    function onMouseDown(event) {
-        isDragging = true;
-        prevMouseX = event.clientX;
-        prevMouseY = event.clientY;
+    // 新增一個圓球
+    // const sphereGeometry = new THREE.SphereGeometry(4, 32, 32); // 半徑為5，32段
+    // const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x0087dc }); // 紅色材質
+    // const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    // sphereMesh.position.set(0, 0, -30); // 設置球的位置
+    // scene.add(sphereMesh);
+
+    // 3. 創建 3D 物件
+    const geometry = new THREE.SphereGeometry(0.5, 32, 32);
+    const material = new THREE.MeshStandardMaterial({ color: 0x0077ff });
+    const sphere = new THREE.Mesh(geometry, material);
+    scene.add(sphere);
+
+    // 2. 添加 CSS2DRenderer
+    const labelRenderer = new CSS2DRenderer();
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.domElement.style.position = 'absolute';
+    labelRenderer.domElement.style.top = '0px';
+    labelRenderer.domElement.style.pointerEvents = 'none'; // 確保不影響滑鼠事件
+    document.body.appendChild(labelRenderer.domElement);
+
+    const div = document.createElement('div');
+    div.className = 'css-label';
+    div.innerHTML = '🎉 動畫標籤';
+    document.body.appendChild(div);
+    //  設置 CSS 樣式與動畫
+    const style = document.createElement('style');
+    style.innerHTML = `
+    .css-label {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: black;
+        animation: fadeInOut 2s infinite alternate;
     }
-
-    function onMouseMove(event) {
-        if (!isDragging) return;
-        const deltaX = event.clientX - prevMouseX;
-        const deltaY = event.clientY - prevMouseY;
-
-        lon -= deltaX * 0.1;
-        lat = Math.max(-85, Math.min(85, lat - deltaY * 0.1)); // 限制仰角範圍
-
-        prevMouseX = event.clientX;
-        prevMouseY = event.clientY;
+    
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: scale(1); }
+        100% { opacity: 1; transform: scale(1.2); }
     }
+`;
+    document.head.appendChild(style);
+    const label = new CSS2DObject(div);
+    label.position.set(0, 0.6, 0); // 調整標籤的位置
+    sphere.add(label); // 附加到球體
 
-    function onMouseUp() {
-        isDragging = false;
-    }
-
-    // 更新攝影機角度
-    function updateCamera() {
-        const phi = THREE.MathUtils.degToRad(90 - lat);
-        const theta = THREE.MathUtils.degToRad(lon);
-
-        camera.position.x = Math.sin(phi) * Math.cos(theta);
-        camera.position.y = Math.cos(phi);
-        camera.position.z = Math.sin(phi) * Math.sin(theta);
-        camera.lookAt(0, 0, 0);
-    }
+    const { moveUpdateCamera } = useMove(renderer, camera);
 
     // 渲染動畫
     function animate() {
-        updateCamera();
+        moveUpdateCamera();
         renderer.render(scene, camera);
+        labelRenderer.render(scene, camera); // 渲染 CSS2DRenderer
         requestAnimationFrame(animate);
     }
 
     animate();
-
-    // 監聽滑鼠事件
-    renderer.domElement.addEventListener("mousedown", onMouseDown);
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
 });
 </script>
 
@@ -101,8 +111,8 @@ onMounted(() => {
 
     &__three {
         overflow: hidden;
-        width: 80%;
-        height: 80%;
+        width: calc(100% - 6rem);
+        height: calc(100% - 6rem);
     }
 }
 </style>

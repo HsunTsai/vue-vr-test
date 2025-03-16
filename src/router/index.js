@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '../views/sample/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,7 +15,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      component: () => import('../views/sample/AboutView.vue'),
     },
     {
       path: '/vrobject',
@@ -25,7 +25,8 @@ const router = createRouter({
     {
       path: '/vr',
       name: 'vr',
-      component: () => import('../views/VRView.vue'),
+      // component: () => import('../views/VRView.vue'),
+      component: () => import('../views/TestView2.vue'),
     },
   ],
 })
