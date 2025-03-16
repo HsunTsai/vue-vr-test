@@ -1,3 +1,11 @@
+<template>
+    <div class="vr-view">
+        <div class="vr-view__three">
+            <div ref="container"></div>
+        </div>
+    </div>
+</template>
+
 <script setup>
 import { onMounted, ref } from "vue";
 import * as THREE from "three";
@@ -83,6 +91,18 @@ onMounted(() => {
 });
 </script>
 
-<template>
-    <div ref="container" style="width: 100vw; height: 100%;"></div>
-</template>
+<style scoped lang="scss">
+.vr-view {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+
+    &__three {
+        overflow: hidden;
+        width: 80%;
+        height: 80%;
+    }
+}
+</style>
