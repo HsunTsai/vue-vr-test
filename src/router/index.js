@@ -23,10 +23,30 @@ const router = createRouter({
       component: () => import('../views/VRObjectView.vue'),
     },
     {
-      path: '/vr',
-      name: 'vr',
+      path: '/vr3Dof',
+      name: 'vr3Dof',
       // component: () => import('../views/VRView.vue'),
       component: () => import('../views/TestView2.vue'),
+    },
+    {
+      path: '/light',
+      name: 'light',
+      component: () => import('../views/lightView/LightView.vue'),
+    },
+    {
+      path: '/snow',
+      name: 'snow',
+      component: () => import('../views/snowView/SnowView.vue'),
+    },
+    {
+      path: '/vr6Dof',
+      name: 'vr6Dof',
+      component: () => import('../views/vrView/VRView.vue'),
+    },
+    {
+      path: '/webXR',
+      name: 'webXR',
+      component: () => import('../views/webXR/WebXRView.vue'),
     },
   ],
 })

@@ -12,8 +12,12 @@ import { RouterLink, RouterView } from 'vue-router'
         <nav>
           <!-- <RouterLink to="/">Home</RouterLink>
           <RouterLink to="/about">About</RouterLink> -->
-          <RouterLink to="/vr">VR</RouterLink>
-          <RouterLink to="/vrobject">VR + Object</RouterLink>
+          <RouterLink to="/light">Light</RouterLink>
+          <RouterLink to="/snow">Snow</RouterLink>
+          <RouterLink to="/vr3Dof">VR(3Dof)</RouterLink>
+          <RouterLink to="/vr6Dof">VR(6Dof)</RouterLink>
+          <RouterLink to="/webXR">WebXR</RouterLink>
+          <!-- <RouterLink to="/vrobject">VR + Object</RouterLink> -->
         </nav>
       </div>
     </header>

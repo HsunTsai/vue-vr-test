@@ -1,0 +1,18 @@
+.scene-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+.stats-panel {
+  > div {
+    // position: unset;
+    top: unset !important;
+    left: unset !important;
+    right: 0;
+    bottom: 0;
+  }
+}
+.dg.ac {
+  top: 70px;
+}
